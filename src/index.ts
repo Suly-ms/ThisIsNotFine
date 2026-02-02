@@ -364,6 +364,13 @@ app.get('/api/schools/:name/students', async (req, res) => {
 });
 
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+
+// Export app for Vercel
+export default app;
+
+// Only listen if running directly (not imported)
+if (require.main === module || (typeof Bun !== 'undefined' && Bun.main)) {
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
+}
