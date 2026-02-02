@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À Propos - This Is (Not) Fine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>This Is (Not) Fine</h1>
+        <br>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="/profile.html">Mon Profil</a>
+            <a href="/search.html">Rechercher</a>
+            <a href="/about.html">À Propos</a>
+            <a class="btnDeconnexion" href="/api/logout">Déconnexion</a>
+            <!-- Admin link will be inserted here by JS if user is admin -->
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2>À Propos de This Is (Not) Fine</h2>
+            <p>
+                This Is (Not) Fine est une plateforme dédiée à connecter les étudiants en recherche d'opportunités de
+                stage avec des entreprises.
+                Notre mission est de faciliter la mise en relation entre les talents de demain et les organisations qui
+                cherchent à les recruter.
+            </p>
+            <p>
+                Les étudiants peuvent s'inscrire sur la plateforme et indiquer leurs préférences de recherche (type de
+                stage, statut de la recherche).
+                Les entreprises, quant à elles, peuvent parcourir le répertoire d'étudiants et les contacter directement
+                pour discuter des opportunités de stage.
+            </p>
+            <p>
+                Notre objectif est de simplifier le processus de recrutement pour les entreprises et d'offrir une
+                visibilité accrue aux étudiants,
+                les aidant ainsi à trouver le stage idéal pour leur parcours professionnel.
+            </p>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const schoolList = document.getElementById('school-list');
+            const nav = document.querySelector('nav');
+
+            try {
+                const meResponse = await fetch('/api/me');
+                if (meResponse.ok) {
+                    const me = await meResponse.json();
+                    if (me.admin) {
+                        const createSchoolLink = document.createElement('a');
+                        createSchoolLink.href = '/create-school.html';
+                        createSchoolLink.textContent = 'Créer un établissement';
+                        nav.appendChild(createSchoolLink);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

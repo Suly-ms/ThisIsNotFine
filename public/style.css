@@ -1,0 +1,153 @@
+body {
+    font-family: monospace;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header,
+main {
+    width: 100%;
+    max-width: 800px;
+}
+
+header {
+    border-bottom: 2px solid #333;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+h1,
+h2 {
+    margin: 0;
+    text-transform: uppercase;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    margin-right: 1rem;
+    border: 2px solid #333;
+    padding: 0.5rem 1rem;
+}
+
+nav a:hover {
+    background-color: #333;
+    color: #f5f5f5;
+}
+
+.container {
+    border: 2px solid #333;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select {
+    border: 2px solid #333;
+    padding: 0.5rem;
+    font-family: monospace;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid #000;
+}
+
+
+button {
+    background-color: #333;
+    color: #f5f5f5;
+    border: 2px solid #333;
+    padding: 0.75rem 1.5rem;
+    font-family: monospace;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+button:hover {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+details {
+    margin-bottom: 5px;
+}
+
+.student-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.student-list li {
+    border: 2px solid #333;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.student-list li p {
+    margin: 0.25rem 0;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+.btnDeconnexion {
+    margin-left: auto;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #333;
+    border-top: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-list li:last-child {
+    border-bottom: none;
+}
+
+.suggestions-list li:hover {
+    background-color: #f5f5f5;
+}

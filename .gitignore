@@ -1,0 +1,13 @@
+# Dependencies
+/node_modules
+/.bun
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# Build output
+/dist
+
+# Environment
+.env

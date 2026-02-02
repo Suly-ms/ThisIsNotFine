@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étudiants</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>This Is (Not) Fine</h1>
+        <br>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="/profile.html">Mon Profil</a>
+            <a href="/search.html">Rechercher</a>
+            <a href="/about.html">À Propos</a>
+            <a class="btnDeconnexion" href="/api/logout">Déconnexion</a>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2 id="school-name">Étudiants de...</h2>
+            <ul class="student-.list" id="student-list">
+                <!-- Student data will be loaded here -->
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const schoolName = params.get('name');
+            const schoolNameElement = document.getElementById('school-name');
+            const studentListElement = document.getElementById('student-list');
+
+            if (!schoolName) {
+                schoolNameElement.textContent = 'Aucun établissement spécifié';
+                return;
+            }
+
+            schoolNameElement.textContent = `Étudiants de ${schoolName}`;
+            document.title = `Étudiants de ${schoolName}`;
+
+            try {
+                const response = await fetch(`/api/schools/${encodeURIComponent(schoolName)}/students`);
+                if (!response.ok) {
+                    studentListElement.innerHTML = `<li>Impossible de trouver l'établissement.</li>`;
+                    throw new Error('Failed to fetch students');
+                }
+                const students = await response.json();
+
+                if (students.length === 0) {
+                    studentListElement.innerHTML = `<li>Aucun étudiant trouvé pour cet établissement.</li>`;
+                    return;
+                }
+
+                students.forEach(student => {
+                    const li = document.createElement('li');
+                    const profile = student.profile;
+
+                    // Utilisation de details/summary pour l'expansion
+                    li.innerHTML = `
+                        <details>
+                            <summary style="font-size: 1.2em;">
+                                <strong>${student.firstName} ${student.lastName}</strong> 
+                                - ${profile ? profile.searchType : 'N/A'} (${profile ? profile.searchStatus : 'N/A'})
+                            </summary>
+                            <div style="margin-left: 40px; margin-top: 10px; margin-bottom: 5px; font-size: 1.15em;">
+                                <p><strong>Domaine d'études:</strong> ${profile.studyDomain || 'Non renseigné'}</p>
+                                <p><strong>Liens:</strong></p>
+                                <ul>
+                                    ${profile.linkedin ? `<li><a href="${profile.linkedin}" target="_blank">LinkedIn</a></li>` : ''}
+                                    ${profile.github ? `<li><a href="${profile.github}" target="_blank">GitHub</a></li>` : ''}
+                                    ${profile.portfolio ? `<li><a href="${profile.portfolio}" target="_blank">Portfolio</a></li>` : ''}
+                                </ul>
+                            </div>
+                        </details>
+                    `;
+                    studentListElement.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error('Error fetching students:', error);
+                studentListElement.innerHTML = `<li>Erreur lors du chargement des étudiants.</li>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

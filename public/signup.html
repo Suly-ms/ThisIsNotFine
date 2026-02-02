@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création de compte</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>This Is (Not) Fine</h1>
+        <br>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="/">Connexion</a>
+            <a href="/about.html">À Propos</a>
+            <a class="btnDeconnexion" href="/api/logout">Déconnexion</a>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Créer un compte</h2>
+            <form action="/api/signup" method="POST">
+
+                <label for="firstname">Prénom:</label>
+                <input type="text" id="firstname" name="firstname" required>
+                <label for="lastname">Nom:</label>
+                <input type="text" id="lastname" name="lastname" required>
+
+                <label for="email">Email (@etu.unistra.fr):</label>
+                <input type="email" id="email" name="email" placeholder="prenom.nom@etu.unistra.fr" required>
+
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="school">Établissement d'étude:</label>
+                <select id="school" name="schoolId" required></select>
+
+                <label for="searchType">Recherche:</label>
+                <select id="searchType" name="searchType">
+                    <option value="Stage">Stage</option>
+                    <option value="Alternance">Alternance</option>
+                </select>
+
+                <label for="searchStatus">Statut de la recherche:</label>
+                <select id="searchStatus" name="searchStatus">
+                    <option value="En recherche">En recherche</option>
+                    <option value="Trouvé">Trouvé</option>
+                </select>
+
+                <button type="submit">Créer le compte</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const schoolSelect = document.getElementById('school');
+            try {
+                const response = await fetch('/api/schools');
+                const schools = await response.json();
+                if (schools.length > 0) {
+                    schools.forEach(school => {
+                        const option = document.createElement('option');
+                        option.value = school.id;
+                        option.textContent = school.name;
+                        schoolSelect.appendChild(option);
+                    });
+                } else {
+                    schoolSelect.innerHTML = '<option value="">Aucune école disponible</option>';
+                }
+            } catch (error) {
+                console.error('Error fetching schools:', error);
+                schoolSelect.innerHTML = '<option value="">Erreur lors du chargement des écoles</option>';
+            }
+        });
+    </script>
+</body>
+
+</html>

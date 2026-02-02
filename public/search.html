@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechercher un établissement</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+            border: 1px solid #ccc;
+            background-color: white;
+        }
+
+        .leaflet-container {
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>This Is (Not) Fine</h1>
+        <br>
+        <nav>
+            <a href="/">Accueil</a>
+            <a href="/profile.html">Mon Profil</a>
+            <a href="/about.html">À Propos</a>
+            <a class="btnDeconnexion" href="/api/logout">Déconnexion</a>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Rechercher un établissement</h2>
+            <form action="/school.html" method="GET">
+                <label for="school-search">Nom de l'établissement:</label>
+                <div style="position: relative;">
+                    <input type="text" id="school-search" name="name" placeholder="Ex: Epitech" autocomplete="off"
+                        required>
+                    <ul id="suggestions" class="suggestions-list"></ul>
+                </div>
+                <button type="submit">Rechercher</button>
+            </form>
+            <div id="map"></div>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const schoolList = document.getElementById('school-list');
+            const nav = document.querySelector('nav');
+
+            try {
+                const meResponse = await fetch('/api/me');
+                if (meResponse.ok) {
+                    const me = await meResponse.json();
+                    if (me.admin) {
+                        const createSchoolLink = document.createElement('a');
+                        createSchoolLink.href = '/create-school.html';
+                        createSchoolLink.textContent = 'Créer un établissement';
+                        nav.appendChild(createSchoolLink);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                console.error('Error fetching user data:', error);
+            }
+
+            // Init Map
+            const map = L.map('map', {
+                maxZoom: 18
+            }).setView([46.603354, 1.888334], 6); // Centered on France
+
+            // Clean white background (no tiles)
+            // We only add the GeoJSON
+
+            // Live Search Logic
+            const searchInput = document.getElementById('school-search');
+            const suggestionsList = document.getElementById('suggestions');
+            let allSchools = [];
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                suggestionsList.innerHTML = '';
+
+                if (query.length === 0) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                const filtered = allSchools.filter(school => school.name.toLowerCase().includes(query));
+
+                if (filtered.length > 0) {
+                    suggestionsList.style.display = 'block';
+                    filtered.forEach(school => {
+                        const li = document.createElement('li');
+                        li.textContent = school.name;
+                        li.addEventListener('click', () => {
+                            window.location.href = `/school.html?name=${encodeURIComponent(school.name)}`;
+                        });
+                        suggestionsList.appendChild(li);
+                    });
+                } else {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+
+            try {
+                // Fetch France GeoJSON
+                const geoJsonRes = await fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries/FRA.geo.json');
+                const geoJsonData = await geoJsonRes.json();
+
+                L.geoJSON(geoJsonData, {
+                    style: {
+                        color: "#000000",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0
+                    }
+                }).addTo(map);
+
+                // Fetch Schools
+                const response = await fetch('/api/schools');
+                if (!response.ok) {
+                    console.error("Failed to fetch schools:", response.status, response.statusText);
+                    return;
+                }
+                allSchools = await response.json();
+
+                const markers = L.markerClusterGroup();
+
+                allSchools.forEach(school => {
+                    if (school.latitude && school.longitude) {
+                        const marker = L.marker([school.latitude, school.longitude]);
+                        marker.bindPopup(`<b>${school.name}</b><br><a href="/school.html?name=${encodeURIComponent(school.name)}">Voir les étudiants</a>`);
+                        markers.addLayer(marker);
+                    }
+                });
+
+                map.addLayer(markers);
+
+            } catch (error) {
+                console.error("Error loading map data", error);
+            }
+        });
+    </script>
+</body>
+
+</html>
