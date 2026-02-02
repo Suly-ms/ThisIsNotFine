@@ -23,8 +23,13 @@ app.use(session({
     }
 }));
 
-const isBun = typeof Bun !== 'undefined';
-const projectRoot = isBun ? path.join(import.meta.dir, '..') : path.resolve(__dirname, '..');
+import { fileURLToPath } from 'url'; // <--- NOUVEL IMPORT
+
+// On recrée __dirname manuellement pour être compatible ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const projectRoot = path.resolve(__dirname, '..');
 
 
 
