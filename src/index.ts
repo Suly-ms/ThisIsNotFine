@@ -155,24 +155,22 @@ app.put('/api/me/profile', async (req, res) => {
 });
 
 // Config Nodemailer (Ethereal pour dev)
-let transporter: nodemailer.Transporter;
-
-nodemailer.createTestAccount((err, account) => {
-    if (err) {
-        console.error('Failed to create a testing account. ' + err.message);
-        return process.exit(1);
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: process.env.SMTP_SECURE === 'true', // true pour le port 465, false pour les autres
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD
     }
-    console.log('Credentials obtained, sending message...');
+});
 
-    transporter = nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
-        auth: {
-            user: account.user,
-            pass: account.pass
-        }
-    });
+transporter.verify((error, success) => {
+    if (error) {
+        console.error("Erreur de connexion SMTP :", error);
+    } else {
+        console.log("Prêt à envoyer des emails !");
+    }
 });
 
 app.post('/api/signup', async (req, res) => {
@@ -229,19 +227,21 @@ app.post('/api/signup', async (req, res) => {
         // Send email
         if (transporter) {
             const message = {
-                from: 'ThisIs(Not)Fine <no-reply@thisisnotfine.com>',
+                from: '"This Is (Not) Fine" <thisisnotfine.noreply@gmail.com>', // Mets ton email ici
                 to: email,
                 subject: 'Code de vérification',
                 text: `Votre code de vérification est : ${verificationCode}`,
                 html: `<p>Votre code de vérification est : <strong>${verificationCode}</strong></p>`
             };
+
+            // On envoie le mail sans attendre (ou avec await si tu préfères)
             transporter.sendMail(message, (err, info) => {
                 if (err) {
-                    console.log('Error occurred. ' + err.message);
-                    return process.exit(1);
+                    console.error('Erreur lors de l\'envoi du mail :', err);
+                    // On ne quitte plus le processus avec process.exit(1), on log juste l'erreur
+                } else {
+                    console.log('Email envoyé : %s', info.messageId);
                 }
-                console.log('Message sent: %s', info.messageId);
-                console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
             });
         } else {
             console.log(`[DEV MODE] Verification Code for ${email}: ${verificationCode}`);
