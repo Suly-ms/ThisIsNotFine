@@ -50,14 +50,15 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
 // Liste des routes publiques (ajout des routes auth)
 app.use((req, res, next) => {
     const publicRoutes = [
-        '/', 
-        '/signup.html', 
-        '/api/login', 
-        '/api/signup', 
-        '/style.css', 
-        '/api/schools', 
+        '/',
+        '/signup.html',
+        '/api/login',
+        '/api/signup',
+        '/style.css',
+        '/api/schools',
         '/about.html',
         '/search.html', // Autorise la page de recherche
+        '/login.html',
         '/school.html'  // Autorise la page qui affiche les étudiants
     ];
 
@@ -372,9 +373,9 @@ app.get('/api/schools/:name/students', async (req, res) => {
 
 
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
 }
 
 export default app;
