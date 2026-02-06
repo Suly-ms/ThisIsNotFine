@@ -50,17 +50,18 @@ const requireAuth = (req: Request, res: Response, next: NextFunction) => {
 // Liste des routes publiques (ajout des routes auth)
 app.use((req, res, next) => {
     const publicRoutes = [
-        '/',
-        '/login.html',
-        '/verify-email.html',
-        '/signup.html',
-        '/api/login',
-        '/api/signup',
-        '/style.css',
-        '/api/schools',
-        '/about.html'
+        '/', 
+        '/signup.html', 
+        '/api/login', 
+        '/api/signup', 
+        '/style.css', 
+        '/api/schools', 
+        '/about.html',
+        '/search.html', // Autorise la page de recherche
+        '/school.html'  // Autorise la page qui affiche les étudiants
     ];
-    if (publicRoutes.includes(req.path)) {
+
+    if (publicRoutes.includes(req.path) || req.path.startsWith('/api/schools/')) {
         return next();
     }
     requireAuth(req, res, next);
