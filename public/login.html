@@ -21,6 +21,7 @@
     <main>
         <div class="container">
             <h2>Connexion</h2>
+            <div id="error-message" class="error-alert" style="display: none;"></div>
             <form action="/api/login" method="POST">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
@@ -33,5 +34,40 @@
         </div>
     </main>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. On récupère les paramètres de l'URL
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
 
+        // 2. On cible la div d'erreur
+        const errorDiv = document.getElementById('error-message');
+
+        // 3. Si une erreur est présente, on affiche le bon message
+        if (error && errorDiv) {
+            let message = "";
+
+            switch(error) {
+                case 'not_found':
+                    message = "Aucun compte associé à cet email.";
+                    break;
+                case 'wrong_password':
+                    message = "Mot de passe incorrect.";
+                    break;
+                case 'not_verified':
+                    message = "Veuillez vérifier votre email avant de vous connecter.";
+                    break;
+                default:
+                    message = "Une erreur est survenue. Veuillez réessayer.";
+            }
+
+            // On injecte le texte et on rend la div visible
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Petit bonus : on nettoie l'URL pour que l'erreur disparaisse si on rafraichit
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>
 </html>

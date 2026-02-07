@@ -50,11 +50,54 @@
 
                 <button type="submit">Enregistrer</button>
             </form>
+            <br>
+            <div class="container">
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc;">
+
+                <div style="text-align: right;">
+                    <h3>Zone de Danger</h3>
+                    <p style="font-size: 0.9em; color: #666;">Cette action est irréversible.</p>
+                    <button id="btnDeleteAccount" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px;">
+                        Supprimer mon compte définitivement
+                    </button>
+                </div>
+            </div>
             <div id="message" style="margin-top: 10px;"></div>
         </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            const btnDelete = document.getElementById('btnDeleteAccount');
+            
+            if (btnDelete) {
+                btnDelete.addEventListener('click', async () => {
+                    // 1. Demander confirmation (Sécurité)
+                    const confirmation = confirm("Êtes-vous SÛR de vouloir supprimer votre compte ? \nToutes vos données seront effacées définitivement.");
+                    
+                    if (!confirmation) return; // Si l'utilisateur clique Annuler, on arrête tout.
+
+                    try {
+                        // 2. Envoyer la requête DELETE
+                        const response = await fetch('/api/me/profile', {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            alert("Votre compte a été supprimé. Au revoir !");
+                            window.location.href = '/';
+                        } else {
+                            alert("Erreur lors de la suppression. Veuillez réessayer.");
+                        }
+                    } catch (error) {
+                        console.error("Erreur réseau:", error);
+                        alert("Impossible de contacter le serveur.");
+                    }
+                });
+            }
+
             const form = document.getElementById('profile-form');
             const messageDiv = document.getElementById('message');
 

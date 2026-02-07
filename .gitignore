@@ -11,3 +11,6 @@
 
 # Environment
 .env
+
+/postgres_data_windows
+docker-compose.db.yml
