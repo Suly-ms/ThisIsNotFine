@@ -199,3 +199,14 @@ nav {
     text-align: center;
     font-weight: bold;
 }
+
+#map {
+    height: 600px;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+.leaflet-container {
+    background: white;
+}
