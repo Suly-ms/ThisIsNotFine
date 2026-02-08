@@ -9,7 +9,7 @@ import profileRouter from './routes/profile';
 import schoolRouter from './routes/school';
 
 const app = express();
-const port = 45645;
+const port = 3000;
 
 // Setup basique
 app.use(express.json());
