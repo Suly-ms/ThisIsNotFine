@@ -53,7 +53,7 @@ app.use((req, res, next) => {
     if (publicRoutes.includes(req.path) || req.path.startsWith('/api/schools/')) {
         return next();
     }
-    
+
     // Sinon, on applique le middleware d'auth importé
     requireAuth(req, res, next);
 });
@@ -67,7 +67,8 @@ app.use(profileRouter);
 app.use(schoolRouter);
 
 // Démarrage serveur
-if (import.meta.main) {
+// Démarrage serveur
+if (import.meta.main || process.env.pm_id) {
     app.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);
     });
