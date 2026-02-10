@@ -2,6 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import helmet from 'helmet';
 
 // Import des routes
 import authRouter, { requireAuth } from './routes/auth';
@@ -11,7 +12,21 @@ import schoolRouter from './routes/school';
 const app = express();
 const port = 3000;
 
-// Setup basique
+app.use(helmet({
+    // On autorise Leaflet et les tuiles de carte
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+            imgSrc: ["'self'", "data:", "https://*.openstreetmap.org", "https://unpkg.com"],
+            connectSrc: ["'self'", "https://raw.githubusercontent.com"], // Pour le GeoJSON
+        },
+    },
+    // On désactive COEP car les serveurs de tuiles (OSM) ne sont pas compatibles
+    crossOriginEmbedderPolicy: false, 
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', 1);

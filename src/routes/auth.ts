@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import { prisma } from '../lib/prisma'; // Import depuis notre nouveau fichier lib
 import { allowedDomains } from '../utils/domains';
+import rateLimit from 'express-rate-limit';
 
 const router = Router();
 
@@ -34,6 +35,15 @@ export const requireAdmin = async (req: Request, res: Response, next: NextFuncti
         res.status(401).send('Unauthorized');
     }
 };
+
+// Configuration du limiteur : 5 tentatives max toutes les 15 minutes
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limite chaque IP à 5 requêtes par fenêtre
+    message: 'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.',
+    standardHeaders: true, // Retourne les infos de limite dans les headers `RateLimit-*`
+    legacyHeaders: false, // Désactive les headers `X-RateLimit-*`
+});
 
 // --- Config Email ---
 const transporter = nodemailer.createTransport({
@@ -104,7 +114,7 @@ router.post('/api/signup', async (req, res) => {
     }
 });
 
-router.post('/api/login', async (req, res) => {
+router.post('/api/login', loginLimiter,  async (req, res) => {
     const { email, password } = req.body;
 
     try {
