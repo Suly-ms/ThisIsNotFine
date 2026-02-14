@@ -65,9 +65,10 @@
         *   Terminal 1 (Backend) : `bun run dev` (Port 3000)
         *   Terminal 2 (Frontend) : `cd frontend && bun dev` (Port 5173 - avec HMR)
 
-    *   **Mode Production** :
+    *   **Mode Production (avec PM2)** :
         1.  Construire le frontend : `cd frontend && bun run build`
-        2.  Lancer le serveur : `bun run start` (Le backend servira les fichiers statiques sur le port 3000).
+        2.  Lancer avec PM2 : `pm2 start ecosystem.config.cjs`
+        3.  Sauvegarder pour le redémarrage : `pm2 save` && `pm2 startup`
 
 ## 📂 Structure du projet
 
