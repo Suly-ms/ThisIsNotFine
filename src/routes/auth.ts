@@ -57,10 +57,13 @@ const transporter = nodemailer.createTransport({
 });
 
 // --- Routes ---
+router.get('/api/domains', (req, res) => {
+    res.json(allowedDomains);
+});
 
 router.post('/api/signup', async (req, res) => {
     const { firstname, lastname, schoolId, searchType, searchStatus, password, email } = req.body;
-    
+
     // Validation Domaine
     const emailDomain = email ? email.split('@')[1] : '';
     if (!email || !allowedDomains.includes(emailDomain)) {
@@ -96,7 +99,7 @@ router.post('/api/signup', async (req, res) => {
 
         // Envoi email (simplifié)
         if (transporter) {
-             transporter.sendMail({
+            transporter.sendMail({
                 from: '"This Is (Not) Fine" <noreply@thisisnotfine.fr>',
                 to: email,
                 subject: 'Code de vérification',
@@ -107,35 +110,38 @@ router.post('/api/signup', async (req, res) => {
 
         const session = req.session as any;
         session.userId = user.id;
-        res.redirect('/verify-email.html');
+        // Redirect logic handled by frontend, but for signup with email verify...
+        // Original code redirected to /verify-email.html.
+        // We should return success and maybe instructions.
+        res.json({ success: true, message: "Inscription réussie. Veuillez vérifier vos emails." });
     } catch (error) {
         console.error(error);
         res.status(500).send('Erreur inscription.');
     }
 });
 
-router.post('/api/login', loginLimiter,  async (req, res) => {
+router.post('/api/login', loginLimiter, async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
-            return res.redirect('/login.html?error=not_found');
+            return res.status(401).send('Utilisateur non trouvé');
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.redirect('/login.html?error=wrong_password');
+            return res.status(401).send('Mot de passe incorrect');
         }
 
         if (!user.emailVerified) {
-             return res.redirect('/login.html?error=not_verified');
+            return res.status(403).send('Email non vérifié');
         }
 
         const session = req.session as any;
         session.userId = user.id;
-        res.redirect('/search.html');
+        res.json({ success: true, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, admin: user.admin, email: user.email } });
 
     } catch (error) {
         console.error(error);
@@ -146,7 +152,7 @@ router.post('/api/login', loginLimiter,  async (req, res) => {
 router.post('/api/verify-code', async (req, res) => {
     const session = req.session as any;
     const { code } = req.body;
-    if (!session.userId) return res.redirect('/login.html');
+    if (!session.userId) return res.status(401).send('Non connecté');
 
     const user = await prisma.user.findUnique({ where: { id: session.userId } });
     if (user && user.verificationCode === code) {
@@ -154,14 +160,14 @@ router.post('/api/verify-code', async (req, res) => {
             where: { id: user.id },
             data: { emailVerified: true, verificationCode: null }
         });
-        res.redirect('/search.html');
+        res.json({ success: true });
     } else {
         res.status(400).send('Code incorrect.');
     }
 });
 
 router.get('/api/logout', (req, res) => {
-    req.session.destroy(() => res.redirect('/'));
+    req.session.destroy(() => res.json({ success: true }));
 });
 
 export default router;

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine # Version légère et récente
+    restart: always # Redémarre si le serveur plante
+    ports:
+      # IMPORTANT : On lie le port uniquement à localhost (127.0.0.1)
+      # Cela empêche quiconque d'accéder à la base depuis l'extérieur.
+      # Seul votre serveur (et donc votre appli Bun) pourra s'y connecter.
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: martin # <--- Changez ceci
+      POSTGRES_PASSWORD: isx2029#F16Pos # <--- Changez ceci
+      POSTGRES_DB: bun-web-this-is-not-fine # <--- Changez ceci
+    volumes:
+      # C'est ici que les données seront stockées physiquement sur votre disque
+      # Même si vous supprimez le conteneur, les données restent ici.
+      - ./pgdata:/var/lib/postgresql/data

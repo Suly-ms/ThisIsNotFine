@@ -8,7 +8,14 @@ const router = Router();
 // Route API pour récupérer les écoles (publique ou protégée selon vos besoins)
 router.get('/api/schools', async (req, res) => {
     try {
-        const schools = await prisma.school.findMany();
+        const schools = await prisma.school.findMany({
+            include: {
+                _count: {
+                    select: { users: true }
+                }
+            }
+        });
+        console.log(`[DEBUG] Schools found: ${schools.length}`);
         res.json(schools);
     } catch (error) {
         res.status(500).send('Error fetching schools');

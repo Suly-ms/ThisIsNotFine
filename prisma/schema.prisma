@@ -37,6 +37,8 @@ model StudentProfile {
   github       String?
   portfolio    String?
   studyDomain  String?
+  bio          String?
+  cvPath       String?
   user         User   @relation(fields: [userId], references: [id])
   userId       Int    @unique
 }

@@ -8,9 +8,14 @@ import helmet from 'helmet';
 import authRouter, { requireAuth } from './routes/auth';
 import profileRouter from './routes/profile';
 import schoolRouter from './routes/school';
+import searchRouter from './routes/search';
+
+// ... (existing code)
+
+
 
 const app = express();
-const port = 3000;
+const port = 3000; // Port configuration
 
 app.use(helmet({
     // On autorise Leaflet et les tuiles de carte
@@ -20,11 +25,11 @@ app.use(helmet({
             scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
             imgSrc: ["'self'", "data:", "https://*.openstreetmap.org", "https://unpkg.com"],
-            connectSrc: ["'self'", "https://raw.githubusercontent.com"], // Pour le GeoJSON
+            connectSrc: ["'self'", "https://raw.githubusercontent.com", "https://nominatim.openstreetmap.org"], // Pour le GeoJSON et Nominatim
         },
     },
     // On désactive COEP car les serveurs de tuiles (OSM) ne sont pas compatibles
-    crossOriginEmbedderPolicy: false, 
+    crossOriginEmbedderPolicy: false,
 }));
 
 app.use(express.json());
@@ -48,38 +53,51 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
-// Middleware Global de protection (Liste Blanche)
-app.use((req, res, next) => {
-    const publicRoutes = [
-        '/',
-        '/signup.html',
-        '/login.html',
+// Middleware d'authentification pour l'API uniquement
+app.use('/api', (req, res, next) => {
+    const publicApiRoutes = [
         '/api/login',
         '/api/signup',
-        '/api/schools', // Souvent public pour la liste déroulante
-        '/style.css',
-        '/about.html',
-        '/search.html',
-        '/school.html',
-        '/email-correct.html'
+        '/api/schools', // Public list
+        '/api/domains', // Public domains list
+        '/api/students', // Public student search
     ];
 
-    // On laisse passer si c'est public OU si c'est une route d'API student publique
-    if (publicRoutes.includes(req.path) || req.path.startsWith('/api/schools/')) {
+    // Si la route est publique ou commence par /api/schools/ (détail public), on laisse passer
+    // Attention: mounted on /api, req.path is relative (e.g. /schools)
+    // We should better use req.originalUrl or adjust the list.
+    // Let's use req.originalUrl which includes the full path including /api
+    // But req.originalUrl might include query params.
+    // Simpler: use path.join or just expect the relative path if we wanted.
+    // BUT EASIEST: Match the full path using req.baseUrl + req.path ~ but redundant.
+
+    // Fix: We'll just checks against req.originalUrl (ignoring query params)
+    const currentPath = req.originalUrl.split('?')[0];
+
+    if (publicApiRoutes.includes(currentPath) || currentPath.startsWith('/api/schools/')) {
         return next();
     }
 
-    // Sinon, on applique le middleware d'auth importé
+    // Sinon on vérifie la session via requireAuth
     requireAuth(req, res, next);
 });
 
-// Servir les fichiers statiques
-app.use(express.static(path.join(projectRoot, 'public')));
+// Servir le frontend React buildé
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Utilisation des Routers
+// Servir les uploads (CVs, etc.)
+app.use('/uploads', express.static(path.join(projectRoot, 'public/uploads')));
+
+// Utilisation des Routers pour l'API
 app.use(authRouter);
 app.use(profileRouter);
 app.use(schoolRouter);
+app.use(searchRouter);
+
+// Pour toutes les autres routes (SPA), renvoyer index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 // Démarrage serveur
 // Démarrage serveur

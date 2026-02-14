@@ -112,6 +112,15 @@ details {
     margin: 0.25rem 0;
 }
 
+.student-list summary {
+    cursor: pointer;
+}
+
+.student-list summary::marker {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 nav {
     display: flex;
     align-items: center;
