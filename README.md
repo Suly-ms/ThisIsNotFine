@@ -1,11 +1,11 @@
 # This Is (Not) Fine
 
-**This Is (Not) Fine** est une plateforme web dédiée à la mise en relation et à la gestion des profils étudiants, spécifiquement conçue pour les étudiants de l'Université de Strasbourg (Unistra). Elle permet aux étudiants de signaler leur statut de recherche (Stage, Alternance) et aux administrateurs de gérer les établissements.
+**This Is (Not) Fine** est une plateforme web dédiée à la mise en relation et à la gestion des profils étudiants, spécifiquement conçue pour les étudiants en France. Elle permet aux étudiants de signaler leur statut de recherche (Stage, Alternance) et aux administrateurs de gérer les établissements.
 
 ## 🚀 Fonctionnalités
 
 *   **Authentification Sécurisée** : Inscription et connexion avec hachage des mots de passe (Bcrypt).
-*   **Vérification Étudiante** : Restriction stricte des inscriptions aux adresses email `@etu.unistra.fr` avec vérification par code email (SMTP).
+*   **Vérification Étudiante** : Restriction stricte des inscriptions aux adresses email avec un domaine d'une école publique ou privé avec vérification par code email (SMTP).
 *   **Gestion de Profils** : Les étudiants peuvent mettre à jour leur statut (En recherche, Trouvé), leurs liens (LinkedIn, GitHub, Portfolio), leur domaine d'études, et uploader leur CV.
 *   **Géolocalisation des Écoles** : Création d'établissements avec autocomplétion et récupération automatique des coordonnées GPS.
 *   **Recherche** : Carte interactive (Leaflet) et annuaire des étudiants par établissement.
