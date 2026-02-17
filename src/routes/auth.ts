@@ -62,12 +62,14 @@ router.get('/api/domains', (req, res) => {
 });
 
 router.post('/api/signup', async (req, res) => {
-    const { firstname, lastname, schoolId, searchType, searchStatus, password, email } = req.body;
+    const { firstname, lastname, schoolId, searchType, searchStatus, password, email, userType, companyName, companyWebsite, companyDescription } = req.body;
 
-    // Validation Domaine
-    const emailDomain = email ? email.split('@')[1] : '';
-    if (!email || !allowedDomains.includes(emailDomain)) {
-        return res.status(400).send(`Domaine @${emailDomain} non autorisé.`);
+    // Validation Domaine (seulement pour les étudiants)
+    if (userType !== 'COMPANY') {
+        const emailDomain = email ? email.split('@')[1] : '';
+        if (!email || !allowedDomains.includes(emailDomain)) {
+            return res.status(400).send(`Domaine @${emailDomain} non autorisé pour les étudiants.`);
+        }
     }
 
     if (!password || password.length < 3) return res.status(400).send('Password trop court.');
@@ -79,22 +81,36 @@ router.post('/api/signup', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-        const user = await prisma.user.create({
-            data: {
-                firstName: firstname,
-                lastName: lastname,
-                schoolId: parseInt(schoolId),
-                password: hashedPassword,
-                email: email,
-                verificationCode: verificationCode,
-                // Création du profil en même temps (cleaner)
-                profile: {
-                    create: {
-                        searchType: searchType || "Stage",
-                        searchStatus: searchStatus || "En recherche"
-                    }
+        let userData: any = {
+            firstName: firstname,
+            lastName: lastname,
+            password: hashedPassword,
+            email: email,
+            verificationCode: verificationCode,
+            userType: userType || 'STUDENT',
+            adminVerified: userType !== 'COMPANY', // Companies need manual verification
+        };
+
+        if (userType === 'COMPANY') {
+            userData.companyProfile = {
+                create: {
+                    name: companyName,
+                    website: companyWebsite,
+                    description: companyDescription
                 }
-            },
+            };
+        } else {
+            userData.schoolId = parseInt(schoolId);
+            userData.profile = {
+                create: {
+                    searchType: searchType || "Stage",
+                    searchStatus: searchStatus || "En recherche"
+                }
+            };
+        }
+
+        const user = await prisma.user.create({
+            data: userData,
         });
 
         // Envoi email (simplifié)
@@ -108,12 +124,14 @@ router.post('/api/signup', async (req, res) => {
             }).catch(console.error);
         }
 
-        const session = req.session as any;
-        session.userId = user.id;
-        // Redirect logic handled by frontend, but for signup with email verify...
-        // Original code redirected to /verify-email.html.
-        // We should return success and maybe instructions.
-        res.json({ success: true, message: "Inscription réussie. Veuillez vérifier vos emails." });
+        if (userType === 'COMPANY') {
+            res.json({ success: true, message: "Inscription réussie. Votre compte entreprise est en attente de validation par un administrateur." });
+        } else {
+            // For students, we might want to log them in directly or ask for email verify
+            // Current flow: ask for email verify (but we return success json)
+            res.json({ success: true, message: "Inscription réussie. Veuillez vérifier vos emails." });
+        }
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Erreur inscription.');
@@ -135,13 +153,21 @@ router.post('/api/login', loginLimiter, async (req, res) => {
             return res.status(401).send('Mot de passe incorrect');
         }
 
+        if (!user.adminVerified) {
+            return res.status(403).send('Compte en attente de validation par un administrateur.');
+        }
+
         if (!user.emailVerified) {
             return res.status(403).send('Email non vérifié');
         }
 
+        if (user.banExpiresAt && user.banExpiresAt > new Date()) {
+            return res.status(403).send(`Compte suspendu jusqu'au ${user.banExpiresAt.toLocaleString()}.`);
+        }
+
         const session = req.session as any;
         session.userId = user.id;
-        res.json({ success: true, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, admin: user.admin, email: user.email } });
+        res.json({ success: true, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, admin: user.admin, email: user.email, userType: user.userType } });
 
     } catch (error) {
         console.error(error);

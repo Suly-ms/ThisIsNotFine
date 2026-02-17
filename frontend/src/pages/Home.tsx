@@ -1,7 +1,9 @@
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Home() {
+    usePageTitle('Accueil');
     const { user, loading } = useAuth();
 
     if (loading) return <div>Chargement...</div>;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface Student {
     id: number;
@@ -19,6 +20,7 @@ interface Student {
 
 export default function School() {
     const { name } = useParams<{ name: string }>();
+    usePageTitle(`Établissement - ${name}`);
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

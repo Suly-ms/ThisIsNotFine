@@ -9,6 +9,7 @@ import authRouter, { requireAuth } from './routes/auth';
 import profileRouter from './routes/profile';
 import schoolRouter from './routes/school';
 import searchRouter from './routes/search';
+import adminRouter from './routes/admin';
 
 // ... (existing code)
 
@@ -93,6 +94,7 @@ app.use(authRouter);
 app.use(profileRouter);
 app.use(schoolRouter);
 app.use(searchRouter);
+app.use(adminRouter);
 
 // Pour toutes les autres routes (SPA), renvoyer index.html
 app.get('*', (req, res) => {

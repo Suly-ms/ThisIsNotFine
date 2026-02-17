@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function VerifyEmail() {
+    usePageTitle('Vérification Email');
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();

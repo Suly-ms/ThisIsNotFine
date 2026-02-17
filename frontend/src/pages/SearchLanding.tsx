@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function SearchLanding() {
+    usePageTitle('Recherche');
     return (
         <main>
             <div className="container" style={{ textAlign: 'center', marginTop: '50px' }}>

@@ -6,7 +6,14 @@ interface User {
     lastName: string;
     admin: boolean;
     email: string;
+    userType?: string;
+    adminVerified?: boolean;
     profile?: any;
+    companyProfile?: {
+        name: string;
+        website?: string;
+        description?: string;
+    } | null;
 }
 
 interface AuthContextType {

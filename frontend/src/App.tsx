@@ -13,6 +13,8 @@ import AuthorizedDomains from './pages/AuthorizedDomains';
 import SearchLanding from './pages/SearchLanding';
 import SchoolMap from './pages/SchoolMap';
 import StudentSearch from './pages/StudentSearch';
+import CompanySignup from './pages/CompanySignup';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
 function App() {
@@ -24,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/company-signup" element={<CompanySignup />} />
           <Route path="/about" element={<About />} />
           <Route path="/authorized-domains" element={<AuthorizedDomains />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
@@ -33,6 +36,7 @@ function App() {
           <Route path="/students" element={<StudentSearch />} />
           <Route path="/school/:name" element={<School />} />
           <Route path="/create-school" element={<CreateSchool />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </AuthProvider>

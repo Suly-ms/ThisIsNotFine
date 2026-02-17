@@ -15,14 +15,15 @@ export default function Navbar() {
                     <>
                         <Link to="/profile">Mon Profil</Link>
                         <Link to="/search">Rechercher</Link>
+                        {user.admin && <Link to="/admin" style={{ color: 'red', fontWeight: 'bold' }}>Espace Admin</Link>}
                         <Link to="/about">À Propos</Link>
-                        {user.admin && <Link to="/create-school">Créer un établissement</Link>}
                         <button onClick={logout} className="btnDeconnexion" style={{ marginLeft: 'auto' }}>Déconnexion</button>
                     </>
                 ) : (
                     <>
                         <Link to="/login">Connexion</Link>
-                        <Link to="/signup">Inscription</Link>
+                        <Link to="/signup">Étudiants</Link>
+                        <Link to="/company-signup">Entreprises</Link>
                     </>
                 )}
             </nav>

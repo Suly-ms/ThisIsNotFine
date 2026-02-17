@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
-export default function CreateSchool() {
+export default function CreateSchool({ onSuccess }: { onSuccess?: () => void }) {
+    usePageTitle('Créer un établissement');
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [latitude, setLatitude] = useState('');
@@ -44,7 +46,16 @@ export default function CreateSchool() {
             });
             if (res.ok) {
                 setMessage({ text: 'Établissement créé !', type: 'success' });
-                setTimeout(() => navigate('/'), 1500);
+                if (onSuccess) {
+                    onSuccess();
+                    // Reset form or something? For now just callback.
+                    setName('');
+                    setCity('');
+                    setLatitude('');
+                    setLongitude('');
+                } else {
+                    setTimeout(() => navigate('/'), 1500);
+                }
             } else {
                 setMessage({ text: 'Erreur lors de la création', type: 'error' });
             }

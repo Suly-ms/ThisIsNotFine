@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface Profile {
     bio: string;
     studyDomain: string;
     searchStatus: string;
     searchType: string;
+    linkedin?: string;
+    github?: string;
+    portfolio?: string;
+    cvPath?: string;
 }
 
 interface User {
@@ -16,6 +21,7 @@ interface User {
 }
 
 export default function StudentSearch() {
+    usePageTitle('Recherche Étudiants');
     const [students, setStudents] = useState<User[]>([]);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);

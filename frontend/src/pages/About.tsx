@@ -1,4 +1,7 @@
+import { usePageTitle } from '../hooks/usePageTitle';
+
 export default function About() {
+    usePageTitle('À Propos');
     return (
         <main>
             <div className="container">

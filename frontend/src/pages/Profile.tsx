@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 interface StudentProfile {
     searchType: string;
@@ -13,11 +14,17 @@ interface StudentProfile {
 }
 
 export default function Profile() {
+    usePageTitle('Mon Profil');
     const { user, checkAuth } = useAuth();
     const [profile, setProfile] = useState<StudentProfile>({
         searchType: 'Stage',
         searchStatus: 'En recherche'
     });
+    // Company state
+    const [companyName, setCompanyName] = useState('');
+    const [companyWebsite, setCompanyWebsite] = useState('');
+    const [companyDescription, setCompanyDescription] = useState('');
+
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
@@ -29,8 +36,14 @@ export default function Profile() {
 
 
     useEffect(() => {
-        if (user?.profile) {
-            setProfile(user.profile as StudentProfile);
+        if (user) {
+            if (user.userType === 'COMPANY' && user.companyProfile) {
+                setCompanyName(user.companyProfile.name || '');
+                setCompanyWebsite(user.companyProfile.website || '');
+                setCompanyDescription(user.companyProfile.description || '');
+            } else if (user.profile) {
+                setProfile(user.profile as StudentProfile);
+            }
         }
         setLoading(false);
     }, [user]);
@@ -40,22 +53,31 @@ export default function Profile() {
         setMessage({ text: 'Enregistrement...', type: 'success' });
 
         const formData = new FormData();
-        // Append all text fields
-        Object.entries(profile).forEach(([key, value]) => {
-            if (value && key !== 'cvPath') formData.append(key, value);
-        });
 
-        // Handle file input manually since we don't have a ref handy, strictly speaking we should use useRef or uncontrolled inputs for file
-        // But let's cheat and grab it from the form event target if possible or just use a state for the file
-        const fileInput = (document.getElementById('cv') as HTMLInputElement)?.files?.[0];
-        if (fileInput) {
-            formData.append('cv', fileInput);
+        if (user?.userType === 'COMPANY') {
+            formData.append('companyName', companyName);
+            formData.append('companyWebsite', companyWebsite);
+            formData.append('companyDescription', companyDescription);
+        } else {
+            // Append all text fields
+            Object.entries(profile).forEach(([key, value]) => {
+                if (value && key !== 'cvPath') formData.append(key, value);
+            });
+
+            // Handle file input manually
+            const fileInput = (document.getElementById('cv') as HTMLInputElement)?.files?.[0];
+            if (fileInput) {
+                formData.append('cv', fileInput);
+            }
         }
 
         try {
             const res = await fetch('/api/me/profile', {
                 method: 'PUT',
-                body: formData
+                body: user?.userType === 'COMPANY' ? JSON.stringify({
+                    companyName, companyWebsite, companyDescription
+                }) : formData,
+                headers: user?.userType === 'COMPANY' ? { 'Content-Type': 'application/json' } : undefined
             });
             if (res.ok) {
                 setMessage({ text: 'Profil mis à jour avec succès !', type: 'success' });
@@ -119,40 +141,56 @@ export default function Profile() {
     return (
         <main>
             <div className="container">
-                <h2>Mon Profil</h2>
+                <h2>Mon Profil {user?.userType === 'COMPANY' ? '(Entreprise)' : '(Étudiant)'}</h2>
                 <form onSubmit={handleProfileUpdate}>
-                    <label htmlFor="searchType">Je recherche:</label>
-                    <select id="searchType" value={profile.searchType} onChange={e => setProfile({ ...profile, searchType: e.target.value })}>
-                        <option value="Stage">Stage</option>
-                        <option value="Alternance">Alternance</option>
-                    </select>
 
-                    <label htmlFor="searchStatus">Statut:</label>
-                    <select id="searchStatus" value={profile.searchStatus} onChange={e => setProfile({ ...profile, searchStatus: e.target.value })}>
-                        <option value="En recherche">En recherche</option>
-                        <option value="À l'écoute">À l'écoute</option>
-                        <option value="Trouvé">Trouvé</option>
-                    </select>
+                    {user?.userType === 'COMPANY' ? (
+                        <>
+                            <label htmlFor="companyName">Nom de l'entreprise:</label>
+                            <input type="text" id="companyName" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
 
-                    <label htmlFor="studyDomain">Domaine d'études:</label>
-                    <input type="text" id="studyDomain" placeholder="Ex: Informatique, Gestion..." value={profile.studyDomain || ''} onChange={e => setProfile({ ...profile, studyDomain: e.target.value })} />
+                            <label htmlFor="companyWebsite">Site Web:</label>
+                            <input type="url" id="companyWebsite" value={companyWebsite} onChange={e => setCompanyWebsite(e.target.value)} placeholder="https://..." />
 
-                    <label htmlFor="linkedin">LinkedIn:</label>
-                    <input type="url" id="linkedin" placeholder="https://linkedin.com/in/..." value={profile.linkedin || ''} onChange={e => setProfile({ ...profile, linkedin: e.target.value })} />
+                            <label htmlFor="companyDescription">Description:</label>
+                            <textarea id="companyDescription" value={companyDescription} onChange={e => setCompanyDescription(e.target.value)} rows={4} required></textarea>
+                        </>
+                    ) : (
+                        <>
+                            <label htmlFor="searchType">Je recherche:</label>
+                            <select id="searchType" value={profile.searchType} onChange={e => setProfile({ ...profile, searchType: e.target.value })}>
+                                <option value="Stage">Stage</option>
+                                <option value="Alternance">Alternance</option>
+                            </select>
 
-                    <label htmlFor="github">GitHub:</label>
-                    <input type="url" id="github" placeholder="https://github.com/..." value={profile.github || ''} onChange={e => setProfile({ ...profile, github: e.target.value })} />
+                            <label htmlFor="searchStatus">Statut:</label>
+                            <select id="searchStatus" value={profile.searchStatus} onChange={e => setProfile({ ...profile, searchStatus: e.target.value })}>
+                                <option value="En recherche">En recherche</option>
+                                <option value="À l'écoute">À l'écoute</option>
+                                <option value="Trouvé">Trouvé</option>
+                            </select>
 
-                    <label htmlFor="portfolio">Portfolio / Site Web:</label>
-                    <input type="url" id="portfolio" placeholder="https://mon-portfolio.com" value={profile.portfolio || ''} onChange={e => setProfile({ ...profile, portfolio: e.target.value })} />
+                            <label htmlFor="studyDomain">Domaine d'études:</label>
+                            <input type="text" id="studyDomain" placeholder="Ex: Informatique, Gestion..." value={profile.studyDomain || ''} onChange={e => setProfile({ ...profile, studyDomain: e.target.value })} />
 
-                    <label htmlFor="bio">Ma description (Bio):</label>
-                    <textarea id="bio" rows={4} placeholder="Parlez de vous..." value={profile.bio || ''} onChange={e => setProfile({ ...profile, bio: e.target.value })}></textarea>
-                    <br /><br />
+                            <label htmlFor="linkedin">LinkedIn:</label>
+                            <input type="url" id="linkedin" placeholder="https://linkedin.com/in/..." value={profile.linkedin || ''} onChange={e => setProfile({ ...profile, linkedin: e.target.value })} />
 
-                    <label htmlFor="cv">Mon CV (PDF uniquement):</label>
-                    <input type="file" id="cv" accept="application/pdf" />
-                    <br /><br />
+                            <label htmlFor="github">GitHub:</label>
+                            <input type="url" id="github" placeholder="https://github.com/..." value={profile.github || ''} onChange={e => setProfile({ ...profile, github: e.target.value })} />
+
+                            <label htmlFor="portfolio">Portfolio / Site Web:</label>
+                            <input type="url" id="portfolio" placeholder="https://mon-portfolio.com" value={profile.portfolio || ''} onChange={e => setProfile({ ...profile, portfolio: e.target.value })} />
+
+                            <label htmlFor="bio">Ma description (Bio):</label>
+                            <textarea id="bio" rows={4} placeholder="Parlez de vous..." value={profile.bio || ''} onChange={e => setProfile({ ...profile, bio: e.target.value })}></textarea>
+                            <br /><br />
+
+                            <label htmlFor="cv">Mon CV (PDF uniquement):</label>
+                            <input type="file" id="cv" accept="application/pdf" />
+                            <br /><br />
+                        </>
+                    )}
 
                     <button type="submit">Enregistrer</button>
                 </form>

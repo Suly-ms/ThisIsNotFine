@@ -27,7 +27,11 @@ interface School {
     };
 }
 
+
+import { usePageTitle } from '../hooks/usePageTitle';
+
 export default function Search() {
+    usePageTitle('Carte des Écoles');
     const [schools, setSchools] = useState<School[]>([]);
     const [filteredSchools, setFilteredSchools] = useState<School[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
