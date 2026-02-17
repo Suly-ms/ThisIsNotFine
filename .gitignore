@@ -22,6 +22,7 @@ frontend/dist/
 # Database & Backups
 /postgres_data_windows
 docker-compose.db.yml
+docker-compose.yml
 backup*
 *.sqlite
 *.sqlite-journal
