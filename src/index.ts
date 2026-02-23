@@ -4,32 +4,28 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 
-// Import des routes
 import authRouter, { requireAuth } from './routes/auth';
 import profileRouter from './routes/profile';
 import schoolRouter from './routes/school';
 import searchRouter from './routes/search';
 import adminRouter from './routes/admin';
 
-// ... (existing code)
-
-
-
 const app = express();
-const port = 3000; // Port configuration
+const port = 3000; 
 
 app.use(helmet({
-    // On autorise Leaflet et les tuiles de carte
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+            
+            scriptSrc: ["'self'", "https://unpkg.com"],
+            
             styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+            
             imgSrc: ["'self'", "data:", "https://*.openstreetmap.org", "https://unpkg.com"],
-            connectSrc: ["'self'", "https://raw.githubusercontent.com", "https://nominatim.openstreetmap.org"], // Pour le GeoJSON et Nominatim
+            connectSrc: ["'self'", "https://raw.githubusercontent.com", "https://nominatim.openstreetmap.org"],
         },
     },
-    // On désactive COEP car les serveurs de tuiles (OSM) ne sont pas compatibles
     crossOriginEmbedderPolicy: false,
 }));
 
