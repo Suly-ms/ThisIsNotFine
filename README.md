@@ -1,15 +1,23 @@
 # This Is (Not) Fine
 
-**This Is (Not) Fine** est une plateforme web dédiée à la mise en relation et à la gestion des profils étudiants, spécifiquement conçue pour les étudiants en France. Elle permet aux étudiants de signaler leur statut de recherche (Stage, Alternance) et aux administrateurs de gérer les établissements.
+**This Is (Not) Fine** est une plateforme web dédiée à la mise en relation entre les étudiants en recherche d'opportunités (Stage, Alternance) et les entreprises, avec une vérification stricte des profils.
 
 ## 🚀 Fonctionnalités
 
-*   **Authentification Sécurisée** : Inscription et connexion avec hachage des mots de passe (Bcrypt).
-*   **Vérification Étudiante** : Restriction stricte des inscriptions aux adresses email avec un domaine d'une école publique ou privé avec vérification par code email (SMTP).
-*   **Gestion de Profils** : Les étudiants peuvent mettre à jour leur statut (En recherche, Trouvé), leurs liens (LinkedIn, GitHub, Portfolio), leur domaine d'études, et uploader leur CV.
-*   **Géolocalisation des Écoles** : Création d'établissements avec autocomplétion et récupération automatique des coordonnées GPS.
-*   **Recherche** : Carte interactive (Leaflet) et annuaire des étudiants par établissement.
-*   **Administration** : Interface dédiée pour créer des établissements (protégée par un rôle admin).
+*   **Authentification Sécurisée** : Inscription et connexion avec hachage des mots de passe (Bcrypt) et limitation des tentatives de connexion (Rate Limiting).
+*   **Vérification Étudiante** : Restriction stricte des inscriptions aux étudiants en filtrant les adresses email (domaines d'universités et écoles validés) + vérification par code email (SMTP).
+*   **Profils Entreprises (Nouveau)** : Les recruteurs peuvent s'inscrire pour rechercher des étudiants. Leur compte est soumis à une validation manuelle par l'administration.
+*   **Gestion de Profils** : 
+    *   **Étudiants** : Peuvent mettre à jour leur statut (En recherche, Trouvé), renseigner leurs liens (LinkedIn, GitHub, Portfolio), leur bio, domaine d'études, et uploader leur CV (PDF).
+    *   **Entreprises** : Peuvent détailler leur activité et renseigner leur site web.
+*   **Moteur de Recherche** : 
+    *   Recherche avancée d'étudiants (par nom, mots-clés de bio, ou domaine d'étude).
+    *   Recherche conditionnée (les utilisateurs non connectés sont redirigés vers la page de login).
+*   **Géolocalisation des Écoles** : Carte interactive (Leaflet) listant les établissements et le nombre d'étudiants inscrits. API Nominatim intégrée pour générer les coordonnées GPS lors de la création d'une école.
+*   **Administration Complète** : Interface dédiée (protégée par un rôle admin) pour :
+    *   Créer des établissements.
+    *   Valider ou rejeter les demandes d'inscription d'entreprises.
+    *   Gérer les utilisateurs (bannissement temporaire/définitif, suppression de compte).
 
 ## 🛠 Stack Technique
 
