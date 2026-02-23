@@ -41,7 +41,8 @@ export default function Signup() {
             });
 
             if (res.ok) {
-                navigate('/login');
+                const data = await res.json();
+                navigate('/verify-email', { state: { message: data.message, email } });
             } else {
                 const text = await res.text();
                 setError(text);

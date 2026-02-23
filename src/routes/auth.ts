@@ -62,7 +62,7 @@ router.get('/api/domains', (req, res) => {
 });
 
 router.post('/api/signup', async (req, res) => {
-    const { firstname, lastname, schoolId, searchType, searchStatus, password, email, userType, companyName, companyWebsite, companyDescription } = req.body;
+    const { firstName, firstname, lastName, lastname, schoolId, searchType, searchStatus, password, email, userType, companyName, companyWebsite, companyDescription } = req.body;
 
     // Validation Domaine (seulement pour les étudiants)
     if (userType !== 'COMPANY') {
@@ -82,8 +82,8 @@ router.post('/api/signup', async (req, res) => {
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
         let userData: any = {
-            firstName: firstname,
-            lastName: lastname,
+            firstName: firstName || firstname,
+            lastName: lastName || lastname,
             password: hashedPassword,
             email: email,
             verificationCode: verificationCode,
@@ -176,9 +176,28 @@ router.post('/api/login', loginLimiter, async (req, res) => {
 });
 
 router.post('/api/verify-code', async (req, res) => {
+    const { code, email } = req.body;
+    console.log("[VERIFY-CODE] Payload reçu :", { code, email });
     const session = req.session as any;
-    const { code } = req.body;
-    if (!session.userId) return res.status(401).send('Non connecté');
+
+    // Si l'email est fourni depuis le formulaire (par défaut maintenant)
+    if (email) {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (user && user.verificationCode === code) {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: true, verificationCode: null }
+            });
+
+            // On connecte l'utilisateur automatiquement après la vérification
+            session.userId = user.id;
+            return res.json({ success: true, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, admin: user.admin, email: user.email, userType: user.userType } });
+        }
+        return res.status(400).send('Code ou email incorrect.');
+    }
+
+    // Fallback original si session.userId est présent
+    if (!session.userId) return res.status(401).send('Email manquant ou non connecté');
 
     const user = await prisma.user.findUnique({ where: { id: session.userId } });
     if (user && user.verificationCode === code) {

@@ -26,18 +26,26 @@ export default function StudentSearch() {
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const searchStudents = (searchTerm: string) => {
+    const searchStudents = async (searchTerm: string) => {
         setLoading(true);
-        fetch(`/api/students?q=${encodeURIComponent(searchTerm)}`)
-            .then(res => res.json())
-            .then(data => {
+        try {
+            const res = await fetch(`/api/students?q=${encodeURIComponent(searchTerm)}`);
+            if (res.status === 401) {
+                // Not authenticated, redirect to login
+                window.location.href = '/login';
+                return;
+            }
+            if (res.ok) {
+                const data = await res.json();
                 setStudents(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
+            } else {
+                console.error("Erreur lors de la recherche", await res.text());
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

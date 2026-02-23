@@ -11,17 +11,17 @@ import searchRouter from './routes/search';
 import adminRouter from './routes/admin';
 
 const app = express();
-const port = 3000; 
+const port = 3000;
 
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            
-            scriptSrc: ["'self'", "https://unpkg.com"],
-            
+
+            scriptSrc: ["'self'", "https://unpkg.com", "'sha256-ZswfTY7H35rbv8WC7NXBoiC7WNu86vSzCDChNWwZZDM='"],
+
             styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-            
+
             imgSrc: ["'self'", "data:", "https://*.openstreetmap.org", "https://unpkg.com"],
             connectSrc: ["'self'", "https://raw.githubusercontent.com", "https://nominatim.openstreetmap.org"],
         },
@@ -55,9 +55,9 @@ app.use('/api', (req, res, next) => {
     const publicApiRoutes = [
         '/api/login',
         '/api/signup',
-        '/api/schools', // Public list
-        '/api/domains', // Public domains list
-        '/api/students', // Public student search
+        '/api/verify-code',
+        '/api/schools', // Keep public for signup dropdown
+        '/api/domains',
     ];
 
     // Si la route est publique ou commence par /api/schools/ (détail public), on laisse passer

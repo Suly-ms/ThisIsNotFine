@@ -15,6 +15,7 @@ import SchoolMap from './pages/SchoolMap';
 import StudentSearch from './pages/StudentSearch';
 import CompanySignup from './pages/CompanySignup';
 import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute'; // <-- Import du wrapper
 import './App.css';
 
 function App() {
@@ -30,13 +31,18 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/authorized-domains" element={<AuthorizedDomains />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/search" element={<SearchLanding />} />
-          <Route path="/map" element={<SchoolMap />} />
-          <Route path="/students" element={<StudentSearch />} />
-          <Route path="/school/:name" element={<School />} />
           <Route path="/create-school" element={<CreateSchool />} />
+          <Route path="/school/:name" element={<School />} />
           <Route path="/admin" element={<AdminDashboard />} />
+
+          {/* Routes Protégées (nécessitent d'être connecté) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/search" element={<SearchLanding />} />
+            <Route path="/map" element={<SchoolMap />} />
+            <Route path="/students" element={<StudentSearch />} />
+          </Route>
+
         </Routes>
       </Router>
     </AuthProvider>
