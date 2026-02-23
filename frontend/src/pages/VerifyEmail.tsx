@@ -1,3 +1,8 @@
+/**
+ * Page de Vérification d'Email.
+ * Vérifie le code PIN envoyé par l'API pour activer un compte.
+ * Authentifie automatiquement l'utilisateur si le code est correct.
+ */
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -21,7 +26,7 @@ export default function VerifyEmail() {
                 body: JSON.stringify({ email, code })
             });
             if (res.ok) {
-                navigate('/search'); // Or maybe /login if we didn't log them in automatically
+                navigate('/search');
             } else {
                 const errText = await res.text();
                 setError(errText || 'Code invalide');

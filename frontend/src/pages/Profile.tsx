@@ -1,3 +1,9 @@
+/**
+ * Page de gestion du profil utilisateur.
+ * Affiche et permet l'édition dynamique des informations de l'étudiant 
+ * (bio, liens, CV) ou de l'entreprise. Gère aussi le mot de passe 
+ * et la suppression de compte.
+ */
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -20,7 +26,6 @@ export default function Profile() {
         searchType: 'Stage',
         searchStatus: 'En recherche'
     });
-    // Company state
     const [companyName, setCompanyName] = useState('');
     const [companyWebsite, setCompanyWebsite] = useState('');
     const [companyDescription, setCompanyDescription] = useState('');
@@ -28,7 +33,6 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
-    // Password change state
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -59,12 +63,10 @@ export default function Profile() {
             formData.append('companyWebsite', companyWebsite);
             formData.append('companyDescription', companyDescription);
         } else {
-            // Append all text fields
             Object.entries(profile).forEach(([key, value]) => {
                 if (value && key !== 'cvPath') formData.append(key, value);
             });
 
-            // Handle file input manually
             const fileInput = (document.getElementById('cv') as HTMLInputElement)?.files?.[0];
             if (fileInput) {
                 formData.append('cv', fileInput);
@@ -81,7 +83,7 @@ export default function Profile() {
             });
             if (res.ok) {
                 setMessage({ text: 'Profil mis à jour avec succès !', type: 'success' });
-                checkAuth(); // Refresh user data
+                checkAuth();
             } else {
                 setMessage({ text: 'Erreur lors de la mise à jour.', type: 'error' });
             }

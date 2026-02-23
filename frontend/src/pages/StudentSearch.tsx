@@ -1,3 +1,8 @@
+/**
+ * Page "Recherche d'Étudiants".
+ * Permet de rechercher des profils (bio, compétences, diplome).
+ * Accessible uniquement si l'utilisateur est connecté.
+ */
 import { useState, useEffect } from 'react';
 import { usePageTitle } from '../hooks/usePageTitle';
 
@@ -31,7 +36,6 @@ export default function StudentSearch() {
         try {
             const res = await fetch(`/api/students?q=${encodeURIComponent(searchTerm)}`);
             if (res.status === 401) {
-                // Not authenticated, redirect to login
                 window.location.href = '/login';
                 return;
             }

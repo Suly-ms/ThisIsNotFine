@@ -1,3 +1,8 @@
+/**
+ * Tableau de bord administrateur.
+ * Permet aux admins de créer des écoles, valider des entreprises 
+ * en attente, et gérer les utilisateurs (bannissement, suppression).
+ */
 import { useState, useEffect } from 'react';
 import { usePageTitle } from '../hooks/usePageTitle';
 import CreateSchool from './CreateSchool';

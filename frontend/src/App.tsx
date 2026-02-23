@@ -1,3 +1,8 @@
+/**
+ * Composant racine de l'application React.
+ * Configure le routeur (react-router-dom) et déclare toutes les routes publiques
+ * et privées (en utilisant le composant ProtectedRoute).
+ */
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -15,7 +20,7 @@ import SchoolMap from './pages/SchoolMap';
 import StudentSearch from './pages/StudentSearch';
 import CompanySignup from './pages/CompanySignup';
 import AdminDashboard from './pages/AdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute'; // <-- Import du wrapper
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -35,7 +40,6 @@ function App() {
           <Route path="/school/:name" element={<School />} />
           <Route path="/admin" element={<AdminDashboard />} />
 
-          {/* Routes Protégées (nécessitent d'être connecté) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<SearchLanding />} />

@@ -1,10 +1,14 @@
+/**
+ * Page "Carte des Écoles" (MapInteractive).
+ * Affiche une carte interactive (Leaflet) avec des marqueurs pour 
+ * toutes les écoles enregistrées et permet de filtrer visuellement.
+ */
 import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix for default marker icon in React Leaflet
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -57,8 +61,6 @@ export default function Search() {
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        // logic to locate school or filter list?
-        // Basic search just filters suggestions for now.
     };
 
     const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,10 +118,6 @@ export default function Search() {
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                        {/* We use France GeoJSON in the original, but TileLayer is easier for now. Original had NO tiles, only GeoJSON. 
-                            Let's sticky to Tiles for better UX or try to fetch GeoJSON. 
-                            The user code fetched github raw geojson. I'll use TileLayer for reliability + markers. */}
-
                         {filteredSchools.map(school => (
                             <Marker key={school.id} position={[school.latitude, school.longitude]}>
                                 <Popup>

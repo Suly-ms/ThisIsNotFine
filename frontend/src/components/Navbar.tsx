@@ -1,3 +1,7 @@
+/**
+ * Composant de navigation (Header).
+ * Affiche les liens du menu en fonction de l'état de connexion de l'utilisateur.
+ */
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +14,6 @@ export default function Navbar() {
             <br />
             <nav style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <Link to="/">Accueil</Link>
-                {/* Debug: {JSON.stringify(user)} */}
                 {user ? (
                     <>
                         <Link to="/profile">Mon Profil</Link>

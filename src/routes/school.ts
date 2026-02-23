@@ -1,3 +1,8 @@
+/**
+ * Routes liées aux établissements (écoles).
+ * Récupération de la liste des écoles, de leurs étudiants,
+ * et création d'une école (réservé aux admins).
+ */
 import { Router } from 'express';
 import path from 'path';
 import { prisma } from '../lib/prisma';
@@ -5,7 +10,6 @@ import { requireAdmin } from './auth'; // On réutilise le middleware
 
 const router = Router();
 
-// Route API pour récupérer les écoles (publique ou protégée selon vos besoins)
 router.get('/api/schools', async (req, res) => {
     try {
         const schools = await prisma.school.findMany({
@@ -24,8 +28,6 @@ router.get('/api/schools', async (req, res) => {
 
 // Route HTML pour l'admin
 router.get('/create-school.html', requireAdmin, (req, res) => {
-    // Note: __dirname peut nécessiter un ajustement selon votre config tsconfig/esm
-    // Si projectRoot est global, importez-le, sinon on utilise un chemin relatif
     res.sendFile(path.resolve('public', 'create-school.html'));
 });
 

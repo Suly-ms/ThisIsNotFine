@@ -1,3 +1,9 @@
+/**
+ * Routes d'administration.
+ * Permet de gérer les utilisateurs (bannissement, suppression) et
+ * de valider les comptes entreprises en attente.
+ * Accessible uniquement aux utilisateurs avec le flag `admin` à `true`.
+ */
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { requireAdmin } from './auth';
@@ -53,10 +59,7 @@ router.post('/api/admin/verify-company/:id', async (req, res) => {
 router.post('/api/admin/reject-company/:id', async (req, res) => {
     const userId = parseInt(req.params.id);
     try {
-        // Supprimer le profil entreprise d'abord (cascade should handle it if relation is configured, but explicit is safe)
-        // With cascade delete in schema (default for optional 1-1?), deleting user should be enough.
-        // Let's delete the user.
-        await prisma.companyProfile.delete({ where: { userId } }).catch(() => { }); // Ignore if not found
+        await prisma.companyProfile.delete({ where: { userId } }).catch(() => { });
         await prisma.user.delete({ where: { id: userId } });
         res.json({ success: true, message: 'Entreprise rejetée et supprimée.' });
     } catch (error) {
@@ -137,7 +140,6 @@ router.post('/api/admin/users/:id/unban', async (req, res) => {
 router.delete('/api/admin/users/:id', async (req, res) => {
     const userId = parseInt(req.params.id);
     try {
-        // Cascade delete handled by Prisma schema
         await prisma.user.delete({ where: { id: userId } });
         res.json({ success: true, message: 'Utilisateur supprimé.' });
     } catch (error) {

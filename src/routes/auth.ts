@@ -1,3 +1,8 @@
+/**
+ * Gestion de l'authentification et de la session.
+ * Inclut l'inscription (étudiants et entreprises), la connexion, 
+ * la vérification d'email par code et la déconnexion.
+ */
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
@@ -113,7 +118,6 @@ router.post('/api/signup', async (req, res) => {
             data: userData,
         });
 
-        // Envoi email (simplifié)
         if (transporter) {
             transporter.sendMail({
                 from: '"This Is (Not) Fine" <noreply@thisisnotfine.fr>',
@@ -127,8 +131,6 @@ router.post('/api/signup', async (req, res) => {
         if (userType === 'COMPANY') {
             res.json({ success: true, message: "Inscription réussie. Votre compte entreprise est en attente de validation par un administrateur." });
         } else {
-            // For students, we might want to log them in directly or ask for email verify
-            // Current flow: ask for email verify (but we return success json)
             res.json({ success: true, message: "Inscription réussie. Veuillez vérifier vos emails." });
         }
 

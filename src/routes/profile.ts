@@ -1,3 +1,8 @@
+/**
+ * Gestion du profil utilisateur.
+ * Permet à l'utilisateur connecté de récupérer ou modifier
+ * ses informations personnelles, son mot de passe ou de supprimer son compte.
+ */
 import { Router } from 'express';
 import { prisma } from '../lib/prisma';
 import bcrypt from 'bcryptjs';

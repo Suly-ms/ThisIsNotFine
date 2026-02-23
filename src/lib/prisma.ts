@@ -1,4 +1,7 @@
+/**
+ * Instance globale Prisma Client.
+ * Est exportée pour être réutilisée dans toutes les routes au lieu de créer de nouvelles connexions.
+ */
 import { PrismaClient } from '@prisma/client';
 
-// On instancie Prisma ici pour pouvoir l'importer dans auth.ts, school.ts, etc.
 export const prisma = new PrismaClient();

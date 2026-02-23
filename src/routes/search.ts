@@ -1,3 +1,7 @@
+/**
+ * Moteur de recherche d'étudiants.
+ * Recherche multi-critères (nom, prénom, bio, domaine).
+ */
 import { Router } from 'express';
 import { prisma } from '../lib/prisma';
 

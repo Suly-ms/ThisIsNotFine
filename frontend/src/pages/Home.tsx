@@ -1,3 +1,7 @@
+/**
+ * Page d'accueil Landing Page du projet.
+ * Affiche des boutons d'actions contextuels (visiteur ou connecté).
+ */
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';

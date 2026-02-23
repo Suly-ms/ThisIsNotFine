@@ -1,3 +1,7 @@
+/**
+ * Liste des domaines de messagerie universitaire et d'écoles reconnus.
+ * Utilisée lors de l'inscription pour vérifier le statut des étudiants.
+ */
 const allowedDomains = [
     // --- Universités & Académies ---
     'etu.unistra.fr',        // Strasbourg
@@ -89,7 +93,7 @@ const allowedDomains = [
     'kedgebs.com',           // KEDGE
     'skema.edu',             // SKEMA
     'tbs-education.fr',      // Toulouse BS
-    
+
     // --- Sciences Po ---
     'sciencespo.fr',         // Sciences Po Paris (+ campus régionaux)
     'sciencespo-lille.eu',   // Sciences Po Lille
@@ -97,4 +101,4 @@ const allowedDomains = [
     'sciencespo-bordeaux.fr' // Sciences Po Bordeaux
 ];
 
-export{allowedDomains};
+export { allowedDomains };

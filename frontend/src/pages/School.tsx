@@ -1,3 +1,7 @@
+/**
+ * Page "Détail d'une école".
+ * Affiche la liste des étudiants inscrits pour une école spécifique.
+ */
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';

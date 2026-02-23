@@ -1,3 +1,8 @@
+/**
+ * Page d'inscription pour les étudiants.
+ * Demande les informations de base (nom, email, école) et
+ * redirige vers la vérification d'email.
+ */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -9,14 +14,10 @@ export default function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [schoolId, setSchoolId] = useState(''); // We might need to fetch schools for dropdown, or just use ID for now
+    const [schoolId, setSchoolId] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Note: Original signup used select for schools. 
-    // For MVP react migration, we might want to fetch schools list here.
-    // But let's assume simple input or we fetch schools.
-    // Let's implement fetching schools for the dropdown.
     const [schools, setSchools] = useState<{ id: number, name: string }[]>([]);
 
     useEffect(() => {

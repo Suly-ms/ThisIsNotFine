@@ -1,3 +1,8 @@
+/**
+ * Page "À propos".
+ * Présente le projet, l'infrastructure technique (auto-hébergement) 
+ * et les mentions légales / RGPD.
+ */
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function About() {

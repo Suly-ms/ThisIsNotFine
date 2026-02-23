@@ -1,3 +1,8 @@
+/**
+ * Formulaire de création d'école (Interface Admin).
+ * Utilise l'API Nominatim/OpenStreetMap pour suggérer 
+ * les villes et leurs coordonnées géographiques.
+ */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -33,7 +38,7 @@ export default function CreateSchool({ onSuccess }: { onSuccess?: () => void }) 
         setCity(s.display_name);
         setLatitude(s.lat);
         setLongitude(s.lon);
-        setSuggestions([]); // Clear suggestions after selection
+        setSuggestions([]);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +53,6 @@ export default function CreateSchool({ onSuccess }: { onSuccess?: () => void }) 
                 setMessage({ text: 'Établissement créé !', type: 'success' });
                 if (onSuccess) {
                     onSuccess();
-                    // Reset form or something? For now just callback.
                     setName('');
                     setCity('');
                     setLatitude('');

@@ -1,3 +1,8 @@
+/**
+ * Page d'inscription pour les entreprises (Recruteurs).
+ * Collecte les informations de contact et de l'entreprise. 
+ * Les comptes passent en attente de validation admin.
+ */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';

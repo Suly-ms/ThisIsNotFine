@@ -1,3 +1,8 @@
+/**
+ * Contexte d'authentification global (React Context).
+ * Fournit l'état de l'utilisateur connecté, l'état de chargement, 
+ * et les fonctions applicatives de validation (checkAuth) et de déconnexion.
+ */
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 interface User {
@@ -50,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             await fetch('/api/logout');
             setUser(null);
-            window.location.href = '/login'; // Simple redirect for now
+            window.location.href = '/login';
         } catch (error) {
             console.error("Logout failed", error);
         }

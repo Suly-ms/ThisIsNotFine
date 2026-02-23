@@ -1,3 +1,8 @@
+/**
+ * Page "Domaines Autorisés".
+ * Liste tous les noms de domaine liés aux universités ou écoles
+ * qui sont acceptés lors de l'inscription étudiant.
+ */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';

@@ -1,3 +1,6 @@
+/**
+ * Hook personnalisé pour mettre à jour le titre de la page (onglet du navigateur).
+ */
 import { useEffect } from 'react';
 
 export function usePageTitle(title: string) {

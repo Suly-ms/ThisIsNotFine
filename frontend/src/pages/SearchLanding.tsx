@@ -1,3 +1,8 @@
+/**
+ * Page d'accueil de la recherche.
+ * Oriente l'utilisateur vers la recherche par école (carte) ou 
+ * la recherche directe par compétence et profil étudiant.
+ */
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle';
 
